@@ -10,36 +10,30 @@ class User:
     @classmethod 
     def find_by_username(cls,username):
         connection = sqlite3.connect('data.db')
-        cursor =connection.cursor()
-        
+        cursor =connection.cursor()        
         query = "SELECT * FROM users WHERE username=?"
-        result=cursor.execute(query,(username,))
-        
+        result=cursor.execute(query,(username,))        
         row = result.fetchone()
         if row:
             #user = cls(row[0],row[1],row[2])
             user = cls(*row)
         else:
-            user = None
-        
+            user = None        
         connection.close()
         return user
         
     @classmethod 
     def find_by_id(cls,_id):
         connection = sqlite3.connect('data.db')
-        cursor =connection.cursor()
-        
+        cursor =connection.cursor()        
         query = "SELECT * FROM users WHERE id=?"
-        result=cursor.execute(query,(_id,))
-        
+        result=cursor.execute(query,(_id,))        
         row = result.fetchone()
         if row:
             #user = cls(row[0],row[1],row[2])
             user = cls(*row)
         else:
-            user = None
-        
+            user = None        
         connection.close()
         return user
     
@@ -51,6 +45,8 @@ class UserRegister(Resource):
     
     def post(self):
         data = UserRegister.parser.parse_args()
+        if User.find_by_username(data['username']):
+            return {"message":"A user with that name already present"},400
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()        
         query = "INSERT INTO users VALUES (NULL,?,?)"
